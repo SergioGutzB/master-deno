@@ -1,0 +1,42 @@
+version: "3.7"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    command: yarn start
+    # stdin_open: true
+    # tty: true # help hot reload
+    volumes:
+      - ./frontend/src:/urs/app/src
+    ports:
+      - "3000:3000"
+
+  api:
+    build:
+      context: ./api
+    container_name: api
+    # command:  run -A --allow-env --allow-net --allow-write --allow-read --allow-plugin  --unstable src/main.ts
+    command: denon start
+    environment:
+      - PORT=3001
+      - URL=http://localhost
+      - MONGO_URL=mongodb://api_mongo:27017
+    volumes:
+      - ./api:/app
+    ports:
+      - "3001:3001"
+
+  api_mongo:
+    image: mongo:latest
+    container_name: api_mongo
+    volumes:
+      - mongodb_api:/data/db
+    ports:
+      - "27017:27017"
+
+
+volumes:
+  mongodb_api:
+
